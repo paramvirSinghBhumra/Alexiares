@@ -2,3 +2,4 @@
 login_credentials.txt
 flask
 settings.json
+.DS_Store
