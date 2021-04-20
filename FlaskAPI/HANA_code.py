@@ -19,10 +19,6 @@ class HANAStore:
         # self.port = 
         # self.user = 
         # self.pwd = 
-        self.host = 'c18c36bc-5d5b-4d0f-9ef6-99e1ea023bb8.hana.prod-us10.hanacloud.ondemand.com'
-        self.port = '443'
-        self.user = 'DBADMIN'
-        self.pwd = 'N0radNorthcom'
 
     def get_connection(self):
         conn = dbapi.connect(
