@@ -19,6 +19,7 @@ class HANAStore:
         # self.port = 
         # self.user = 
         # self.pwd = 
+        pass
 
     def get_connection(self):
         conn = dbapi.connect(
