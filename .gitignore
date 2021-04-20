@@ -1,0 +1,4 @@
+*.pyc
+login_credentials.txt
+flask
+settings.json
