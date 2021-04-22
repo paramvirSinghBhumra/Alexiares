@@ -15,11 +15,10 @@ from datetime import datetime
 class HANAStore:
     def __init__(self):
         #in login_credentials file
-        # self.host =
-        # self.port = 
-        # self.user = 
-        # self.pwd = 
-        pass
+        self.host = "temp"
+        self.port = "temp"
+        self.user = "temp"
+        self.pwd = "temp"
 
     def get_connection(self):
         conn = dbapi.connect(
@@ -34,7 +33,7 @@ class HANAStore:
 
 def get_columnNames(cursor, name):
     sql = """
-    SELECT COLUMN_NAME FROM TABLE_COLUMNS WHERE TABLE_NAME = :name;
+    SELECT COLUMN_NAME FROM TABLE_COLUMNS WHERE TABLE_NAME = :name ORDER BY POSITION;
     """
 
     cursor.execute(sql, {"name":name})
@@ -65,26 +64,6 @@ def make_JSON(col_names, values):
     return everything
 
 
-class Airport:
-    def __init__(self, store,conn,cursor):
-        self.store = store
-        self.conn = conn
-        self.cursor = cursor
-
-    def get_ALL(self):
-        sql = "SELECT * FROM AIRPORTS;"
-        self.cursor.execute(sql)
-    
-    def Airport_PossibleRoutes(self):
-        sql = "CALL DBADMIN.SP_TravelPossible('NTE', 'PDX', ?);" # <- doesnt work!
-        self.cursor.execute(sql) # <- execute SQL 
-
-    def Airport_TripRouting(self):
-        self.cursor.callproc('DBADMIN.SP_TripRouting', ('NTE', 'PDX', '?', '?', '?', '?'))
-        # sql = "CALL DBADMIN.SP_TripRouting('NTE', 'PDX', ?, ?, ?, ?);"
-        # cursor.execute(sql)
-
-
 #each function returns a JSON
 class True_View:
     def __init__(self):
@@ -99,7 +78,7 @@ class True_View:
     
     def get_ALL(self, name):
         sql = 'SELECT * FROM DBADMIN."{}";'.format(name)
-        self.cursor.execute(sql)
+        self.cursor.execute(sql) 
         return self.__helper(name)
 
 
@@ -108,48 +87,10 @@ class True_View:
         self.conn.close()
 
 
-    
-
-
-
-
-# if __name__ == '__main__':
-#     store = HANAStore()
-#     conn = store.get_connection()
-#     cursor = conn.cursor()
-
-
-#     col_names = get_columnNames(cursor, "AIRPORTS")
-#     airports = Airport(store, conn, cursor)
-#    # CARBON(store, conn, cursor)
-
-#     #print values returned by calling procedure / SQL 
-#     airports.get_ALL()
-#     arr = []
-#     for row in cursor:
-#         new_line = str(row)+ " " 
-#         new_line = str(new_line.replace("'", "").replace("(", "").replace(")", ""))
-#         arr.append(new_line.split(', ')[:-1])
-    
-#     # print(arr)
-
-#     total_airports = []
-#     for airport in arr:
-#         dict = {t:s for t,s in zip(col_names, airport)}
-#         total_airports.append(dict)
-#     print (json.dumps(total_airports))
-    
-
-    
-
-
-#     cursor.close()
-#     conn.close()
-
 
 if __name__ == "__main__":
     tv = True_View()
-    jsonn = tv.get_ALL("Site")
+    jsonn = tv.get_ALL("Subsystem")
     del tv
 
     print(jsonn)
