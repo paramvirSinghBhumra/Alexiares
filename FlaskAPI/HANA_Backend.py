@@ -15,10 +15,10 @@ from datetime import datetime
 class HANAStore:
     def __init__(self):
         #in login_credentials file
-        # self.host = "temp"
-        # self.port = "temp"
-        # self.user = "temp"
-        # self.pwd = "temp"
+        self.host = "temp"
+        self.port = "temp"
+        self.user = "temp"
+        self.pwd = "temp"
 
 
     def get_connection(self):
