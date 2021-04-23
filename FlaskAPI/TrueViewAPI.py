@@ -27,6 +27,11 @@ def return_all_sites():
 @web.route('/api/sites/<int:site_id>', methods=['GET'])
 #return site <site_id> info.... as well as any 2nd/3rd order relationships with other assets 
 def return_site_info(site_id):
+    tv = True_View()
+    json = tv.get_Specific("Site", site_id)
+    del tv
+
+
     return make_response(jsonify({"error":"page under construction"}), 401)
 
 
@@ -41,6 +46,10 @@ def return_all_systems():
 @web.route('/api/systems/<int:system_id>', methods=['GET'])
 #return system <system_id> info.... as well as any 2nd/3rd order relationships with other assets 
 def return_system_info(system_id):
+    tv = True_View()
+    json = tv.get_Specific("System", system_id)
+    del tv
+
     return make_response(jsonify({"error":"page under construction"}), 401)
 
 
@@ -55,6 +64,10 @@ def return_all_subsystems():
 @web.route('/api/subsystems/<int:subsystem_id>', methods=['GET'])
 #return subsystem <subsystem_id> info.... as well as any 2nd/3rd order relationships with other assets 
 def return_subsystem_info(subsystem_id):
+    tv = True_View()
+    json = tv.get_Specific("Subsystem", subsystem_id)
+    del tv
+
     return make_response(jsonify({"error":"page under construction"}), 401)
 
 

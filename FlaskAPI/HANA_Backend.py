@@ -15,10 +15,11 @@ from datetime import datetime
 class HANAStore:
     def __init__(self):
         #in login_credentials file
-        self.host = "temp"
-        self.port = "temp"
-        self.user = "temp"
-        self.pwd = "temp"
+        # self.host = "temp"
+        # self.port = "temp"
+        # self.user = "temp"
+        # self.pwd = "temp"
+
 
     def get_connection(self):
         conn = dbapi.connect(
@@ -81,6 +82,13 @@ class True_View:
         self.cursor.execute(sql) 
         return self.__helper(name)
 
+    def get_Specific(self, name, id):
+        if name is "Site" or name is "System" or name is "Subsystem":
+            self.cursor.callproc('DBADMIN.SPECIFIC_{}'.format(name), (id, '?', '?', '?', '?'))
+            TODO
+        
+
+
 
     def __del__(self):
         self.cursor.close()
@@ -95,3 +103,15 @@ if __name__ == "__main__":
 
     print(jsonn)
     
+
+    
+    # from Tutorial_Files.HANA_AirportBackend import Airport
+    # store = HANAStore()
+    # conn = store.get_connection()
+    # cursor = conn.cursor()
+    # airport = Airport(store, conn, cursor)
+
+    # airport.Airport_TripRouting()
+    # for row in cursor:
+    #     print(row)
+

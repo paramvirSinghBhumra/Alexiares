@@ -1,22 +1,22 @@
-class HANAStore:
-    def __init__(self):
-        #in login_credentials file
-        self.host = "temp"
-        self.port = "temp"
-        self.user = "temp"
-        self.pwd = "temp"
+# class HANAStore:
+#     def __init__(self):
+#         #in login_credentials file
+#         self.host = "temp"
+#         self.port = "temp"
+#         self.user = "temp"
+#         self.pwd = "temp"
 
 
-    def get_connection(self):
-        conn = dbapi.connect(
-            address=self.host,
-            port=self.port,
-            user=self.user,
-            password=self.pwd,
-            encrypt=True,
-            sslValidateCertificate=False
-        )
-        return conn
+#     def get_connection(self):
+#         conn = dbapi.connect(
+#             address=self.host,
+#             port=self.port,
+#             user=self.user,
+#             password=self.pwd,
+#             encrypt=True,
+#             sslValidateCertificate=False
+#         )
+#         return conn
 
 #example
 class Airport:
