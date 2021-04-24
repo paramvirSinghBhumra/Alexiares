@@ -71,5 +71,5 @@ def not_found(error):
 # def get_tasks():
 #     return jsonify({'tasks': tasks})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
