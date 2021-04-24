@@ -72,4 +72,4 @@ def return_subsystem_info(subsystem_id):
 
 
 if __name__ == "__main__":
-    web.run(debug=True)
+    web.run(debug=True, port=5000)
