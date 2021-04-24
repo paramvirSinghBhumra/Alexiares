@@ -55,7 +55,7 @@
 -- 			TOTALDISTANCE = 0;
 -- 			TOTALDURATION = 0;
 -- 			FOREACH e IN Edges(:p){
--- 				TOTALDISTANCE  = :TOTALDISTANCE + :e."DISTANCE";
+-- 				TOTALDISTANCE  = :TOTALDISTANCE + :e."DISTANCE"; -- :e."DISTANCE" referring to the "DISTANCE" value in the given row in table "AIRPORTS"
 -- 				TOTALDURATION = :TOTALDURATION + :e."DURATION";
 -- 			}
 -- 			ROUTING = SELECT :segment, :e."AIRPORTCODEORIGIN", :e."AIRPORTCODEDESTINATION", :e."AIRLINENAME", :e."DISTANCE", :e."DURATION" FOREACH e in Edges(:p) WITH ORDINALITY AS segment;

@@ -15,10 +15,16 @@ from datetime import datetime
 class HANAStore:
     def __init__(self):
         #in login_credentials file
-        self.host = "temp"
-        self.port = "temp"
-        self.user = "temp"
-        self.pwd = "temp"
+        # self.host = "temp"
+        # self.port = "temp"
+        # self.user = "temp"
+        # self.pwd = "temp"
+        
+        self.host = 'c18c36bc-5d5b-4d0f-9ef6-99e1ea023bb8.hana.prod-us10.hanacloud.ondemand.com'
+        self.port = '443'
+        self.user = 'DBADMIN'
+        self.pwd = 'N0radNorthcom'
+
 
 
     def get_connection(self):
@@ -56,7 +62,6 @@ def make_ARR(cursor):
     
     return arr
 
-
 def make_JSON(col_names, values):
     everything = []
     for val in values:
@@ -83,7 +88,7 @@ class True_View:
         return self.__helper(name)
 
     def get_Specific(self, name, id):
-        if name is "Site" or name is "System" or name is "Subsystem":
+        if name == "Site" or name == "System" or name == "Subsystem":
             self.cursor.callproc('DBADMIN.SPECIFIC_{}'.format(name), (id, '?', '?', '?', '?'))
             TODO
         
@@ -98,10 +103,12 @@ class True_View:
 
 if __name__ == "__main__":
     tv = True_View()
-    jsonn = tv.get_ALL("Subsystem")
+    # jsonn = tv.get_ALL("Subsystem")
+    # print(jsonn)
+    
+    json1 = tv.get_Specific("Subsytem", 1)
+    print(json1)
     del tv
-
-    print(jsonn)
     
 
     
