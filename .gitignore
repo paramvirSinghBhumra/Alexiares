@@ -1,6 +1,6 @@
 *.pyc
 login_credentials.txt
-#flask
+flask
 settings.json
 .DS_Store
 __pycache__
