@@ -1,5 +1,5 @@
 #!flask/bin/python
-from HANA_Backend import get_columnNames, True_View
+from FlaskAPI.HANA_Backend import get_columnNames, True_View
 
 from flask import Flask, jsonify
 from flask import make_response
