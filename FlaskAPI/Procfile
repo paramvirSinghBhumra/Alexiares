@@ -1,1 +1,1 @@
-web: gunicorn TrueViewAPI:web
+web: gunicorn TrueViewAPI:app web=1

@@ -4,19 +4,19 @@ from HANA_Backend import get_columnNames, True_View
 from flask import Flask, jsonify
 from flask import make_response
 
-web = Flask(__name__)
+app = Flask(__name__)
 
 
 
-@web.route('/')
+@app.route('/')
 def index():
     return make_response(jsonify({"msg":"Hi! Make sure you enter \'/api/<asset_name>\' to make a valid API call"}))
     
-@web.route('/api/')
+@app.route('/api/')
 def err_msg():
     return make_response(jsonify({"error":"invalid API call"}), 401)
 
-@web.route('/api/sites', methods=['GET'])
+@app.route('/api/sites', methods=['GET'])
 def return_all_sites():
     tv = True_View()
     json = tv.get_ALL("Site")
@@ -24,7 +24,7 @@ def return_all_sites():
 
     return jsonify(json)
     
-@web.route('/api/sites/<int:site_id>', methods=['GET'])
+@app.route('/api/sites/<int:site_id>', methods=['GET'])
 #return site <site_id> info.... as well as any 2nd/3rd order relationships with other assets 
 def return_site_info(site_id):
     tv = True_View()
@@ -35,7 +35,7 @@ def return_site_info(site_id):
     return make_response(jsonify({"error":"page under construction"}), 401)
 
 
-@web.route('/api/systems', methods=['GET'])
+@app.route('/api/systems', methods=['GET'])
 def return_all_systems():
     tv = True_View()
     json = tv.get_ALL("System")
@@ -43,7 +43,7 @@ def return_all_systems():
 
     return jsonify(json)
 
-@web.route('/api/systems/<int:system_id>', methods=['GET'])
+@app.route('/api/systems/<int:system_id>', methods=['GET'])
 #return system <system_id> info.... as well as any 2nd/3rd order relationships with other assets 
 def return_system_info(system_id):
     tv = True_View()
@@ -53,7 +53,7 @@ def return_system_info(system_id):
     return make_response(jsonify({"error":"page under construction"}), 401)
 
 
-@web.route('/api/subsystems', methods=['GET'])
+@app.route('/api/subsystems', methods=['GET'])
 def return_all_subsystems():
     tv = True_View()
     json = tv.get_ALL("Subsystem")
@@ -61,7 +61,7 @@ def return_all_subsystems():
 
     return jsonify(json)
 
-@web.route('/api/subsystems/<int:subsystem_id>', methods=['GET'])
+@app.route('/api/subsystems/<int:subsystem_id>', methods=['GET'])
 #return subsystem <subsystem_id> info.... as well as any 2nd/3rd order relationships with other assets 
 def return_subsystem_info(subsystem_id):
     tv = True_View()
@@ -72,4 +72,4 @@ def return_subsystem_info(subsystem_id):
 
 
 if __name__ == "__main__":
-    web.run(debug=True, port=5000)
+    app.run(debug=True, port=5000)
