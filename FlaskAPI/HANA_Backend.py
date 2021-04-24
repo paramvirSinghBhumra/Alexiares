@@ -101,24 +101,24 @@ class True_View:
 
 
 
-if __name__ == "__main__":
-    tv = True_View()
-    # jsonn = tv.get_ALL("Subsystem")
-    # print(jsonn)
+# if __name__ == "__main__":
+#     tv = True_View()
+#     # jsonn = tv.get_ALL("Subsystem")
+#     # print(jsonn)
     
-    json1 = tv.get_Specific("Subsytem", 1)
-    print(json1)
-    del tv
+#     json1 = tv.get_Specific("Subsytem", 1)
+#     print(json1)
+#     del tv
     
 
     
-    # from Tutorial_Files.HANA_AirportBackend import Airport
-    # store = HANAStore()
-    # conn = store.get_connection()
-    # cursor = conn.cursor()
-    # airport = Airport(store, conn, cursor)
+#     # from Tutorial_Files.HANA_AirportBackend import Airport
+#     # store = HANAStore()
+#     # conn = store.get_connection()
+#     # cursor = conn.cursor()
+#     # airport = Airport(store, conn, cursor)
 
-    # airport.Airport_TripRouting()
-    # for row in cursor:
-    #     print(row)
+#     # airport.Airport_TripRouting()
+#     # for row in cursor:
+#     #     print(row)
 
