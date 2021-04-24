@@ -88,7 +88,10 @@ class True_View:
         return self.__helper(name)
 
     def get_Specific(self, name, id):
+
+        return {'error':'page currently under construction'}
         if name == "Site" or name == "System" or name == "Subsystem":
+            pass
             self.cursor.callproc('DBADMIN.SPECIFIC_{}'.format(name), (id, '?', '?', '?', '?'))
             TODO
         
