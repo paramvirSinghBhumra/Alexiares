@@ -79,6 +79,7 @@ def second_order(cursor, name, id, col_names):
     cursor.callproc('"DBADMIN"."SPECIFIC1_{}"'.format(name), (id, '?'))
     arr = make_ARR(cursor)
     for a in arr:
+        a.insert(0,name)
         a.insert(0,'2')
     print(arr)
 
@@ -89,6 +90,7 @@ def third_order(cursor, name, id, col_names):
     cursor.callproc('"DBADMIN"."SPECIFIC2_{}"'.format(name), (id, '?'))
     arr = make_ARR(cursor)
     for a in arr:
+        a.insert(0, name)
         a.insert(0, '3') 
 
     print(arr)
@@ -111,7 +113,7 @@ class True_View:
     def get_Specific(self, name, id):
 
         if name == "Mission" or name == "Site" or name == "System" or name == "Subsystem":
-            col_names = ['order_effect', 'effectedNode_id', 'nextLevelEffected_id']
+            col_names = ['order_effect', 'asset_type', 'effectedNode_id', 'nextLevelEffected_id']
             arr2 = second_order(self.cursor, name, id, col_names)
             arr3 = third_order(self.cursor, name, id, col_names)
             
