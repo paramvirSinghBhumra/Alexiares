@@ -63,10 +63,3 @@
 -- ;
 
 -- CALL "DBADMIN"."SP_TripRouting"('NTE', 'PDX', ?, ?, ?, ?);
-
-
-
-
-
-
-

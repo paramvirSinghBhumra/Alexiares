@@ -38,6 +38,8 @@ class HANAStore:
         )
         return conn
 
+
+# automatically searches db and gets column names of table
 def get_columnNames(cursor, name):
     sql = """
     SELECT COLUMN_NAME FROM TABLE_COLUMNS WHERE TABLE_NAME = :name ORDER BY POSITION;
@@ -53,15 +55,18 @@ def get_columnNames(cursor, name):
     
     return col_names
 
+# parses the result and converts it into an array
 def make_ARR(cursor):
     arr = []
     for row in cursor:
+        # arr.append(row)
         new_line = str(row)+ " " 
         new_line = str(new_line.replace("'", "").replace("(", "").replace(")", ""))
-        arr.append(new_line.split(', ')[:-1])
+        arr.append(new_line.split(', '))
     
     return arr
 
+# converts the data into a json format with the appropriate headdings 
 def make_JSON(col_names, values):
     everything = []
     for val in values:
@@ -69,6 +74,25 @@ def make_JSON(col_names, values):
         everything.append(dict)
     return everything
 
+def second_order(cursor, name, id, col_names):
+    #second order effect
+    cursor.callproc('"DBADMIN"."SPECIFIC1_{}"'.format(name), (id, '?'))
+    arr = make_ARR(cursor)
+    for a in arr:
+        a.insert(0,'2')
+    print(arr)
+
+    return arr
+
+def third_order(cursor, name, id, col_names):
+    #third order effect
+    cursor.callproc('"DBADMIN"."SPECIFIC2_{}"'.format(name), (id, '?'))
+    arr = make_ARR(cursor)
+    for a in arr:
+        a.insert(0, '3') 
+
+    print(arr)
+    return arr
 
 #each function returns a JSON
 class True_View:
@@ -77,26 +101,25 @@ class True_View:
         self.conn = self.store.get_connection()
         self.cursor = self.conn.cursor()
     
-    def __helper(self, name):
-        arr = make_ARR(self.cursor)
-        col_names = get_columnNames(self.cursor, name)
-        return make_JSON(col_names, arr)
-    
     def get_ALL(self, name):
         sql = 'SELECT * FROM DBADMIN."{}";'.format(name)
         self.cursor.execute(sql) 
-        return self.__helper(name)
+        arr = make_ARR(self.cursor)
+        col_names = get_columnNames(self.cursor, name)
+        return make_JSON(col_names, arr)
 
     def get_Specific(self, name, id):
 
-        return {'error':'page currently under construction'}
-        if name == "Site" or name == "System" or name == "Subsystem":
-            pass
-            self.cursor.callproc('DBADMIN.SPECIFIC_{}'.format(name), (id, '?', '?', '?', '?'))
-            TODO
+        if name == "Mission" or name == "Site" or name == "System" or name == "Subsystem":
+            col_names = ['order_effect', 'effectedNode_id', 'nextLevelEffected_id']
+            arr2 = second_order(self.cursor, name, id, col_names)
+            arr3 = third_order(self.cursor, name, id, col_names)
+            
+            arr = arr2+arr3
+            return make_JSON(col_names, arr)
         
-
-
+        return {'error':'invalid <asset_name> for API call'}
+        
 
     def __del__(self):
         self.cursor.close()
@@ -104,24 +127,11 @@ class True_View:
 
 
 
-# if __name__ == "__main__":
-#     tv = True_View()
-#     # jsonn = tv.get_ALL("Subsystem")
-#     # print(jsonn)
-    
-#     json1 = tv.get_Specific("Subsytem", 1)
-#     print(json1)
-#     del tv
-    
+if __name__ == "__main__":
+    subsystem_id = 1
+    tv = True_View()
+    tv.get_ALL("Subsystem")
+    print(tv.get_Specific("Subsystem", subsystem_id))
 
+    del tv
     
-#     # from Tutorial_Files.HANA_AirportBackend import Airport
-#     # store = HANAStore()
-#     # conn = store.get_connection()
-#     # cursor = conn.cursor()
-#     # airport = Airport(store, conn, cursor)
-
-#     # airport.Airport_TripRouting()
-#     # for row in cursor:
-#     #     print(row)
-

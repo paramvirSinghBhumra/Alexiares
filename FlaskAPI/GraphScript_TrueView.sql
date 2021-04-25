@@ -40,40 +40,177 @@
 ----------------------------------------------------------------------------------------------------------------------------
 
 -- created table type for "order effect" GraphScript -- 
--- CREATE TYPE "DBADMIN"."TT_OrderEffect" AS TABLE (
--- 	"id" INT, 
--- 	"source_id" NVARCHAR(10), -- Subsystem_id = 1 -> "ssy1" 
--- 	"effectedNode_id" NVARCHAR(10), -- System_id = 1 -> "sy1"
--- 	"orderOfEffect" INT -- 2nd/3rd order effect
--- );
+DROP TYPE "DBADMIN"."TT_OrderEffect";
+CREATE TYPE "DBADMIN"."TT_OrderEffect" AS TABLE (
+	"effectedNode_id" INT,
+	"parentNode_id" INT
+);
 
--- create procedure for "Mission" asset (NOT DONE!!!!!) --
--- CREATE PROCEDURE "DBADMIN"."SPECIFIC_Mission"(
--- 	IN sourceID NVARCHAR(10), 
--- 	OUT counter INT,
--- 	OUT effectedNodeID NVARCHAR(10),
--- 	OUT orderEffect INT,
--- 	OUT ROUTING "DBADMIN"."TT_OrderEffect"
--- )
+
+
+
+-- create procedure for "Mission" asset --
+
+-- DROP PROCEDURE "DBADMIN"."SPECIFIC1_Mission";
+CREATE PROCEDURE "DBADMIN"."SPECIFIC1_Mission"(
+	IN sourceID INT,
+	OUT EFFECT "DBADMIN"."TT_OrderEffect"
 	
--- 	LANGUAGE GRAPH READS SQL DATA AS
--- 		BEGIN
--- 			Graph g = Graph("DBADMIN", "Mission_Graph");
--- 			Vertex sourceVertex = Vertex(:g, :sourceID);
--- 			-- we'll need to add a suffix for each individual type of asset; mission will be "m"
--- 			-- we'll only add nodes in which 'impacts' == true. x -(impacts==true)-> y means x going down will effect y OR y will be effeced by x going offline.
--- 			--ROUTING = SELECT :segment, :e."AIRPORTCODEORIGIN", :e."AIRPORTCODEDESTINATION", :e."AIRLINENAME", :e."DISTANCE", :e."DURATION" FOREACH e in Edges(:p) WITH ORDINALITY AS segment;
--- 		END
--- ;
+)
+	
+	LANGUAGE GRAPH READS SQL DATA AS
+		BEGIN
+			Graph g = Graph("DBADMIN", "Mission_Graph");
+			Vertex sourceVertex = Vertex(:g, :sourceID);
+			MULTISET<VERTEX> neighbors1 = Neighbors(:g, :sourceVertex, 1,1);
+			MULTISET<VERTEX> neighbors2 = Neighbors(:g, :sourceVertex, 2,2);
+			EFFECT = SELECT :n."id", :n."id" FOREACH n in :neighbors1;
+		
+		END;
+		
+		
+-- DROP PROCEDURE "DBADMIN"."SPECIFIC2_Mission";		
+CREATE PROCEDURE "DBADMIN"."SPECIFIC2_Mission"(
+	IN sourceID INT,
+	OUT EFFECT "DBADMIN"."TT_OrderEffect"
+)
+	LANGUAGE GRAPH READS SQL DATA AS
+		BEGIN
+			Graph g = Graph("DBADMIN", "Mission_Graph");
+			Vertex sourceVertex = Vertex(:g, :sourceID);
+			MULTISET<VERTEX> neighbors2 = Neighbors(:g, :sourceVertex, 2,2);
+			EFFECT = SELECT :n."id", :n."id" FOREACH n in :neighbors2; -- repeated :n."id" twice to fit in with the standard TableType
+		END;
+		
+		
+		
 
--- CALL "DBADMIN"."SPECIFIC_Mission"(1, ?,?,?,?);
-
-
+CALL "DBADMIN"."SPECIFIC1_Mission"(1, ?);
+CALL "DBADMIN"."SPECIFIC2_Mission"(1 ,?);
 
 
 
 -- create procedure for "Site" asset -- 
 
+-- DROP PROCEDURE "DBADMIN"."SPECIFIC1_Site";
+CREATE PROCEDURE "DBADMIN"."SPECIFIC1_Site"(
+	IN sourceID INT,
+	OUT EFFECT "DBADMIN"."TT_OrderEffect"
+	
+)
+	
+	LANGUAGE GRAPH READS SQL DATA AS
+		BEGIN
+			Graph g = Graph("DBADMIN", "Site_Graph");
+			Vertex sourceVertex = Vertex(:g, :sourceID);
+			MULTISET<VERTEX> neighbors1 = Neighbors(:g, :sourceVertex, 1,1);
+			MULTISET<VERTEX> neighbors2 = Neighbors(:g, :sourceVertex, 2,2);
+			EFFECT = SELECT :n."id", :n."id" FOREACH n in :neighbors1;
+		
+		END;
+		
+		
+-- DROP PROCEDURE "DBADMIN"."SPECIFIC2_Site";		
+CREATE PROCEDURE "DBADMIN"."SPECIFIC2_Site"(
+	IN sourceID INT,
+	OUT EFFECT "DBADMIN"."TT_OrderEffect"
+	
+)
+	LANGUAGE GRAPH READS SQL DATA AS
+		BEGIN
+			Graph g = Graph("DBADMIN", "Site_Graph");
+			Vertex sourceVertex = Vertex(:g, :sourceID);
+			MULTISET<VERTEX> neighbors2 = Neighbors(:g, :sourceVertex, 2,2);
+			EFFECT = SELECT :n."id", :n."id" FOREACH n in :neighbors2; -- repeated :n."id" twice to fit in with the standard TableType
+		END;
+		
+		
+		
+
+CALL "DBADMIN"."SPECIFIC1_Site"(1, ?);
+CALL "DBADMIN"."SPECIFIC2_Site"(1 ,?);
+
+
+
 -- create procedure for "System" asset --
 
+-- DROP PROCEDURE "DBADMIN"."SPECIFIC1_System";
+CREATE PROCEDURE "DBADMIN"."SPECIFIC1_System"(
+	IN sourceID INT,
+	OUT EFFECT "DBADMIN"."TT_OrderEffect"
+	
+)
+	
+	LANGUAGE GRAPH READS SQL DATA AS
+		BEGIN
+			Graph g = Graph("DBADMIN", "Systems_Graph");
+			Vertex sourceVertex = Vertex(:g, :sourceID);
+			MULTISET<VERTEX> neighbors1 = Neighbors(:g, :sourceVertex, 1,1);
+			MULTISET<VERTEX> neighbors2 = Neighbors(:g, :sourceVertex, 2,2);
+			EFFECT = SELECT :n."id", :n."Site_id" FOREACH n in :neighbors1;
+		
+		END;
+		
+		
+-- DROP PROCEDURE "DBADMIN"."SPECIFIC2_System";		
+CREATE PROCEDURE "DBADMIN"."SPECIFIC2_System"(
+	IN sourceID INT,
+	OUT EFFECT "DBADMIN"."TT_OrderEffect"
+	
+)
+	LANGUAGE GRAPH READS SQL DATA AS
+		BEGIN
+			Graph g = Graph("DBADMIN", "Systems_Graph");
+			Vertex sourceVertex = Vertex(:g, :sourceID);
+			MULTISET<VERTEX> neighbors2 = Neighbors(:g, :sourceVertex, 2,2);
+			EFFECT = SELECT :n."id", :n."Site_id" FOREACH n in :neighbors2; -- repeated :n."id" twice to fit in with the standard TableType
+		END;
+		
+		
+		
+
+CALL "DBADMIN"."SPECIFIC1_System"(1, ?);
+CALL "DBADMIN"."SPECIFIC2_System"(1 ,?);
+
+
+
+
 -- create procedure for "Subsystem" asset -- 
+DROP PROCEDURE "DBADMIN"."SPECIFIC1_Subsystem";
+CREATE PROCEDURE "DBADMIN"."SPECIFIC1_Subsystem"(
+	IN sourceID INT,
+	OUT EFFECT "DBADMIN"."TT_OrderEffect"
+	
+)
+	
+	LANGUAGE GRAPH READS SQL DATA AS
+		BEGIN
+			Graph g = Graph("DBADMIN", "Subsystem_Graph");
+			Vertex sourceVertex = Vertex(:g, :sourceID);
+			MULTISET<VERTEX> neighbors1 = Neighbors(:g, :sourceVertex, 1,1);
+			MULTISET<VERTEX> neighbors2 = Neighbors(:g, :sourceVertex, 2,2);
+			EFFECT = SELECT :n."id", :n."System_id" FOREACH n in :neighbors1;
+		
+		END;
+		
+		
+DROP PROCEDURE "DBADMIN"."SPECIFIC2_Subsystem";		
+CREATE PROCEDURE "DBADMIN"."SPECIFIC2_Subsystem"(
+	IN sourceID INT,
+	OUT EFFECT "DBADMIN"."TT_OrderEffect"
+	
+)
+	LANGUAGE GRAPH READS SQL DATA AS
+		BEGIN
+			Graph g = Graph("DBADMIN", "Subsystem_Graph");
+			Vertex sourceVertex = Vertex(:g, :sourceID);
+			MULTISET<VERTEX> neighbors2 = Neighbors(:g, :sourceVertex, 2,2);
+			EFFECT = SELECT :n."id", :n."System_id" FOREACH n in :neighbors2; -- repeated :n."id" twice to fit in with the standard TableType
+		END;
+		
+		
+		
+
+CALL "DBADMIN"."SPECIFIC1_Subsystem"(1, ?);
+CALL "DBADMIN"."SPECIFIC2_Subsystem"(1 ,?);
+
