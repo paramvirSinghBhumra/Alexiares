@@ -97,7 +97,6 @@ def return_subsystem_info(subsystem_id):
     json = tv.get_Specific("Subsystem", subsystem_id)
     del tv
     
-    print(json)
     return jsonify(json)
 #############################################
 

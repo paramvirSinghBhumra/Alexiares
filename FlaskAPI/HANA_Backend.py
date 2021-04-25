@@ -81,7 +81,6 @@ def second_order(cursor, name, id, col_names):
     for a in arr:
         a.insert(0,name)
         a.insert(0,'2')
-    print(arr)
 
     return arr
 
@@ -93,7 +92,7 @@ def third_order(cursor, name, id, col_names):
         a.insert(0, name)
         a.insert(0, '3') 
 
-    print(arr)
+
     return arr
 
 #each function returns a JSON
