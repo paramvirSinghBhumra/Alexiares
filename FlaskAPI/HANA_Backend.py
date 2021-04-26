@@ -61,7 +61,12 @@ def make_ARR(cursor):
     for row in cursor:
         new_line = str(row)+ " " 
         new_line = str(new_line.replace("'", "").replace("(", "").replace(")", ""))
+        # print(new_line)
         arr.append(new_line.split(', '))
+    
+    for row in arr:
+        row[-1] = row[-1].replace(" ","")
+    
     return arr
 
 # converts the data into a json format with the appropriate headdings 
