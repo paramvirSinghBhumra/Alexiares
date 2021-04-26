@@ -176,7 +176,7 @@ class True_View:
             arr2 = arr2_sameLevel+arr2_nextLevel
             json2 = make_JSON(col_names, arr2)
             # print("json2 ", json2)
-
+            
 
             arr3_sameLevel = third_order(self.cursor, name, id)
             arr3_nextLevel = [] if name == "Site" or name == "Mission" else third_order_nextLevel(self.cursor, name, id, arr2)
