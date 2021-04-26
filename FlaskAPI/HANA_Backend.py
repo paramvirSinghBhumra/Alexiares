@@ -59,11 +59,9 @@ def get_columnNames(cursor, name):
 def make_ARR(cursor):
     arr = []
     for row in cursor:
-        # arr.append(row)
         new_line = str(row)+ " " 
         new_line = str(new_line.replace("'", "").replace("(", "").replace(")", ""))
         arr.append(new_line.split(', '))
-    
     return arr
 
 # converts the data into a json format with the appropriate headdings 
@@ -74,26 +72,80 @@ def make_JSON(col_names, values):
         everything.append(dict)
     return everything
 
-def second_order(cursor, name, id, col_names):
+
+def second_order_nextLevel(cursor, name, id, second=True):
+    new_name = ""
+    if name == "Subsystem":
+        new_name = "System"
+        sql = 'SELECT "id", "System_id" FROM DBADMIN."{0}" WHERE "id" = {1};'.format(name, id)
+        # print("*", sql, "*")
+        cursor.execute(sql)
+        arr = make_ARR(cursor)
+
+    if name == "System":
+        new_name = "Site"
+        sql = 'SELECT "id", "Site_id" FROM DBADMIN.\"{0}\" WHERE \"id\" = {1};'.format(name, id)
+        cursor.execute(sql)
+        arr = make_ARR(cursor)
+
+    if name == "Site":
+        return []
+        new_name = "Mission"
+
+    arr2 = []
+    dict = {
+        "Subsystem": "System_id",
+        "System":"Site_id",
+        "Site":"id" #for now!
+        }
+
+
+    for id in [a1[1] for a1 in arr]:
+        sql = 'SELECT "id", "{0}" FROM DBADMIN."{1}" WHERE "id" = {2};'.format(dict[new_name],new_name, id)
+        cursor.execute(sql)
+        temp_arr = make_ARR(cursor)
+        arr2+=(temp_arr)
+
+
+    for a in arr2:
+        a.insert(0,new_name)
+        a.insert(0,'2' if second else '3')
+    
+    return arr2
+
+def second_order(cursor, name, id, second=True):
     #second order effect
     cursor.callproc('"DBADMIN"."SPECIFIC1_{}"'.format(name), (id, '?'))
     arr = make_ARR(cursor)
     for a in arr:
         a.insert(0,name)
-        a.insert(0,'2')
+        a.insert(0,'2' if second else '3')
+
 
     return arr
 
-def third_order(cursor, name, id, col_names):
+
+
+def third_order(cursor, name, id):
     #third order effect
     cursor.callproc('"DBADMIN"."SPECIFIC2_{}"'.format(name), (id, '?'))
     arr = make_ARR(cursor)
     for a in arr:
         a.insert(0, name)
         a.insert(0, '3') 
-
-
     return arr
+
+def third_order_nextLevel(cursor, name, id, arr2):
+    final_array = []
+    for a in arr2:
+        temp1_arr = second_order_nextLevel(cursor, a[1], a[2], second=False)
+        final_array+= temp1_arr
+        #different level
+        if name != a[1]:
+            temp2_arr = second_order(cursor, a[1], a[2], second=False)
+            final_array+= temp2_arr
+    return(final_array)
+    return []
 
 #each function returns a JSON
 class True_View:
@@ -104,6 +156,7 @@ class True_View:
     
     def get_ALL(self, name):
         sql = 'SELECT * FROM DBADMIN."{}";'.format(name)
+        # sql = 'SELECT "id", "Site_id" FROM DBADMIN."System" WHERE "id" = 1;'
         self.cursor.execute(sql) 
         arr = make_ARR(self.cursor)
         col_names = get_columnNames(self.cursor, name)
@@ -112,10 +165,21 @@ class True_View:
     def get_Specific(self, name, id):
 
         if name == "Mission" or name == "Site" or name == "System" or name == "Subsystem":
-            col_names = ['order_effect', 'asset_type', 'effectedNode_id', 'nextLevelEffected_id']
-            arr2 = second_order(self.cursor, name, id, col_names)
-            arr3 = third_order(self.cursor, name, id, col_names)
-            
+            col_names = ['order_effect', 'asset_type', 'effectedNode_id', 'parentSystem_id']
+            arr2_sameLevel = second_order(self.cursor, name, id)
+            arr2_nextLevel = [] if name == "Site" or name == "Mission" else second_order_nextLevel(self.cursor, name, id) #done except for "Site"
+            arr2 = arr2_sameLevel+arr2_nextLevel
+            json2 = make_JSON(col_names, arr2)
+            # print("json2 ", json2)
+
+
+            arr3_sameLevel = third_order(self.cursor, name, id)
+            arr3_nextLevel = [] if name == "Site" or name == "Mission" else third_order_nextLevel(self.cursor, name, id, arr2)
+            arr3 = arr3_sameLevel+arr3_nextLevel
+            json3 = make_JSON(col_names, arr3)
+            # print("json3 ", json3)
+
+
             arr = arr2+arr3
             return make_JSON(col_names, arr)
         
@@ -131,8 +195,8 @@ class True_View:
 if __name__ == "__main__":
     subsystem_id = 1
     tv = True_View()
-    tv.get_ALL("Subsystem")
-    print(tv.get_Specific("Subsystem", subsystem_id))
+    jsonn = tv.get_Specific("System", subsystem_id)
+    print(jsonn)
 
     del tv
     
